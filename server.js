@@ -1,10 +1,13 @@
  require('./models/db');
 const path = require('path');
  const express =require('express');
+ const jwt = require('jsonwebtoken');
 const multer = require('multer');
  const patientController = require('./controllers/patientController');
  const employeeController = require('./controllers/employeeController');
  const appointmentController = require('./controllers/appointmentController');
+ const loginController = require('./controllers/loginController');
+ const diagnosisController = require('./controllers/diagnosisController');
 
 
 
@@ -54,3 +57,6 @@ app.use((req, res, next) => {
  app.use('/patient',patientController);
  app.use('/employee', employeeController);
  app.use('/appointment',appointmentController);
+ app.use('/api/login',loginController);
+ app.use('/diagnosis',diagnosisController);
+ 

@@ -3,12 +3,13 @@ var router = express.Router();
 const mongoose  =require('mongoose');
 const Patient = mongoose.model('Patient')
 
+const isAuth = require('../middleware/is-auth').isAuth;
+
 
 router.get('/',  async (req,res) =>{
    const patients = await Patient.find();
    res.status(200).json({patients});
 });
-
 
 router.get('/patientInfo', async (req, res) => {
     const patient = await Patient.find().select('firstName').select('lastName').select('matricNo');
@@ -17,11 +18,11 @@ router.get('/patientInfo', async (req, res) => {
 
 
 
-router.post('/', (req, res) => insertPatient(req, res));
+router.post('/', isAuth, (req, res) => insertPatient(req, res));
 
-router.put('/edit/:patientId', (req, res) => updatePatient(req, res));
+router.put('/edit/:patientId', isAuth, (req, res) => updatePatient(req, res));
 
-router.delete('/delete/:patientId', (req, res) => deletePatient(req, res));
+router.delete('/delete/:patientId', isAuth, (req, res) => deletePatient(req, res));
 
 function insertPatient(req, res){
     var patient = new Patient();

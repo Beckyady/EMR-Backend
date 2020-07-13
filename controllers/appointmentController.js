@@ -1,7 +1,10 @@
 const express =require('express');
 var router = express.Router();
 const mongoose  =require('mongoose');
-const Appointment = mongoose.model('Appointment')
+const Appointment = mongoose.model('Appointment');
+const Patient = mongoose.model('Patient');
+
+const isAuth = require('../middleware/is-auth').isAuth;
 
 
 router.get('/',  async (req,res) =>{
@@ -9,18 +12,22 @@ router.get('/',  async (req,res) =>{
     res.status(200).json({appointments});
  });
  
- router.post('/', (req, res) => insertAppointment(req, res));
+ router.post('/',  (req, res) => insertAppointment(req, res));
  
- router.put('/edit/:appointmentId', (req, res) => updateAppointment(req, res));
+ router.put('/edit/:appointmentId', isAuth, (req, res) => updateAppointment(req, res));
  
- router.delete('/delete/:appointmentId', (req, res) => deleteAppointment(req, res));
+ router.delete('/delete/:appointmentId', isAuth, (req, res) => deleteAppointment(req, res));
  
-
- function insertAppointment(req, res){
+ const insertAppointment = async (req, res) => {
+     
     var appointment = new Appointment();
     appointment.appointmentId = req.body.appointmentId
-    appointment.patient = req.body.patient
     appointment.doctorName = req.body.doctorName
+    console.log(req.body.matricNo)
+    const patient = await Patient.findOne({ matricNo: req.body.matricNo });
+    
+    if (!patient) return;
+    appointment.patient = patient._id;
     appointment.appointmentDate = req.body.appointmentDate
     
     appointment.save((err, doc) => {
@@ -39,6 +46,7 @@ const updateAppointment = async (req, res) => {
     appointment.appointmentId = req.body.appointmentId
     appointment.patient = req.body.patient
     appointment.doctorName = req.body.doctorName
+    appointment.matricNo = req.body.matricNo 
     appointment.appointmentDate = req.body.appointmentDate
     
 

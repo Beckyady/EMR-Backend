@@ -13,3 +13,4 @@ mongoose.connect('mongodb://localhost:27017/HospitalDB', { useNewUrlParser: true
 require('./patient.model');
 require('./employee.model');
 require('./appointment.model');
+require('./diagnosis.model');
